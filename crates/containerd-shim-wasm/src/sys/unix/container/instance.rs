@@ -106,7 +106,7 @@ impl<E: Engine> SandboxInstance for Instance<E> {
 
     /// Send a signal to the instance
     fn kill(&self, signal: u32) -> Result<(), SandboxError> {
-        log::info!("sending signal {signal} to instance: {}", self.id);
+        log::info!("RJ sending signal {signal} to instance: {}", self.id);
         let signal = Signal::try_from(signal as i32).map_err(|err| {
             SandboxError::InvalidArgument(format!("invalid signal number: {}", err))
         })?;
