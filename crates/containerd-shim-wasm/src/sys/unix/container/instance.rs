@@ -110,12 +110,13 @@ impl<E: Engine> SandboxInstance for Instance<E> {
         let signal = Signal::try_from(signal as i32).map_err(|err| {
             SandboxError::InvalidArgument(format!("invalid signal number: {}", err))
         })?;
+        log::info!("calling get_instance_root");
         let container_root = get_instance_root(&self.rootdir, &self.id)?;
         let mut container = Container::load(container_root)
             .with_context(|| format!("could not load state for container {}", self.id))?;
-
+        log::info!("calling container.kill");
         container.kill(signal, true)?;
-
+        log::info!("after container kill");
         Ok(())
     }
 
