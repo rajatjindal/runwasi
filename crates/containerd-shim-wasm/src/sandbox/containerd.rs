@@ -122,6 +122,7 @@ impl Client {
     ) -> Result<(Vec<oci::WasmLayer>, Platform)> {
         let image_name = self.get_image(containerd_id.to_string())?;
         let digest = self.get_image_content_sha(image_name)?;
+        log::info!("RJ IS HERE image name {}, container id {}, digest {}", image_name, container_id, digest);
         let manifest = self.read_content(digest)?;
         let manifest = manifest.as_slice();
         let manifest = ImageManifest::from_reader(manifest)?;
