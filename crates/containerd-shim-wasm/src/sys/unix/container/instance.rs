@@ -104,6 +104,24 @@ impl<E: Engine> SandboxInstance for Instance<E> {
         Ok(pid as u32)
     }
 
+    // pub fn kill<S: Into<Signal>>(&mut self, signal: S, all: bool) -> Result<(), LibcontainerError> {
+    //     container.refresh_status()?;
+    //     match container.can_kill() {
+    //         true => {
+    //             container.do_kill(signal, all)?;
+    //         }
+    //         false if all && container.status() == ContainerStatus::Stopped => {
+    //             container.do_kill(signal, all)?;
+    //         }
+    //         false => {
+    //             tracing::error!(id = ?self.id(), status = ?self.status(), "cannot kill container due to incorrect state");
+    //             return Err(LibcontainerError::IncorrectStatus);
+    //         }
+    //     }
+    //     container.set_status(ContainerStatus::Stopped).save()?;
+    //     Ok(())
+    // }
+
     /// Send a signal to the instance
     fn kill(&self, signal: u32) -> Result<(), SandboxError> {
         log::info!("RJ sending signal {signal} to instance: {}", self.id);
@@ -115,7 +133,10 @@ impl<E: Engine> SandboxInstance for Instance<E> {
         let mut container = Container::load(container_root)
             .with_context(|| format!("could not load state for container {}", self.id))?;
         log::info!("calling container.kill");
+        container.refresh_status()?;
+        log::info("can kill? {}", container.can_kill());
         container.kill(signal, true)?;
+        
         log::info!("after container kill");
         Ok(())
     }
