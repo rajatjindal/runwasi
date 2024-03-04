@@ -134,7 +134,7 @@ impl<E: Engine> SandboxInstance for Instance<E> {
             .with_context(|| format!("could not load state for container {}", self.id))?;
         log::info!("calling container.kill");
         container.refresh_status()?;
-        log::info("can kill? {}", container.can_kill());
+        log::info!("can kill? {}", container.can_kill());
         container.kill(signal, true)?;
         
         log::info!("after container kill");
