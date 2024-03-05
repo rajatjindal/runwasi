@@ -107,9 +107,14 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             ));
         }
 
+        log::info!("checking has_instance");
+
         if self.has_instance(&req.id) {
+            log::info!("inside has_instance true {}", req.id);
             return Err(Error::AlreadyExists(req.id));
         }
+        
+        log::info!("inside has_instance false {}", req.id);
 
         let mut spec = Spec::load(Path::new(&req.bundle).join("config.json"))
             .map_err(|err| Error::InvalidArgument(format!("could not load runtime spec: {err}")))?;
