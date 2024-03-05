@@ -93,6 +93,7 @@ impl Client {
 
     pub fn get_image(&self, container_name: impl ToString) -> Result<String> {
         self.rt.block_on(async {
+            log::info!("container name ", container_name.to_string());
             let id = container_name.to_string();
             let req = GetContainerRequest { id };
             let req = with_namespace!(req, self.namespace);
@@ -109,6 +110,7 @@ impl Client {
                     ))
                 })?
                 .image;
+            log::info!("image returned is {}", image.clone());
             Ok(image)
         })
     }
