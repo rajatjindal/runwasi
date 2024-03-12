@@ -179,7 +179,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             ..Default::default()
         });
 
-        debug!("create done for {} with pid {}", req.id().clone(), std::process::id());
+        debug!("create done for {} with pid {}", reqid.clone(), std::process::id());
 
         // Per the spec, the prestart hook must be called as part of the create operation
         debug!("call prehook before the start");
