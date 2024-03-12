@@ -20,6 +20,7 @@ use containerd_shim::publisher::RemotePublisher;
 use containerd_shim::util::IntoOption;
 use containerd_shim::{DeleteResponse, ExitSignal, TtrpcContext, TtrpcResult};
 use log::debug;
+use log::info;
 use oci_spec::runtime::Spec;
 
 use crate::sandbox::instance::{Instance, InstanceConfig};
@@ -175,10 +176,10 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             ..Default::default()
         });
 
-        info!("create done");
+        debug!("create done");
 
         // Per the spec, the prestart hook must be called as part of the create operation
-        info!("call prehook before the start");
+        debug!("call prehook before the start");
         oci::setup_prestart_hooks(spec.hooks())?;
 
         Ok(CreateTaskResponse {
@@ -221,7 +222,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             .context("could not spawn thread to wait exit")
             .map_err(Error::from)?;
 
-        info!("started: {:?}", req);
+        debug!("started: {:?}", req);
 
         Ok(StartResponse {
             pid,
@@ -346,32 +347,32 @@ impl<T: Instance + Sync + Send> SandboxService for Local<T, RemoteEventSender> {
 
 impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
     fn create(&self, _: &TtrpcContext, req: CreateTaskRequest) -> TtrpcResult<CreateTaskResponse> {
-        info!("create: {:?}", req);
+        debug!("create: {:?}", req);
         Ok(self.task_create(req)?)
     }
 
     fn start(&self, _: &TtrpcContext, req: StartRequest) -> TtrpcResult<StartResponse> {
-        info!("start: {:?}", req);
+        debug!("start: {:?}", req);
         Ok(self.task_start(req)?)
     }
 
     fn kill(&self, _: &TtrpcContext, req: KillRequest) -> TtrpcResult<Empty> {
-        info!("kill: {:?}", req);
+        debug!("kill: {:?}", req);
         Ok(self.task_kill(req)?)
     }
 
     fn delete(&self, _: &TtrpcContext, req: DeleteRequest) -> TtrpcResult<DeleteResponse> {
-        info!("delete: {:?}", req);
+        debug!("delete: {:?}", req);
         Ok(self.task_delete(req)?)
     }
 
     fn wait(&self, _: &TtrpcContext, req: WaitRequest) -> TtrpcResult<WaitResponse> {
-        info!("wait: {:?}", req);
+        debug!("wait: {:?}", req);
         Ok(self.task_wait(req)?)
     }
 
     fn connect(&self, _: &TtrpcContext, req: ConnectRequest) -> TtrpcResult<ConnectResponse> {
-        info!("connect: {:?}", req);
+        debug!("connect: {:?}", req);
         let i = self.get_instance(req.id())?;
         let shim_pid = std::process::id();
         let task_pid = i.pid().unwrap_or_default();
@@ -383,12 +384,12 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
     }
 
     fn state(&self, _: &TtrpcContext, req: StateRequest) -> TtrpcResult<StateResponse> {
-        info!("state: {:?}", req);
+        debug!("state: {:?}", req);
         Ok(self.task_state(req)?)
     }
 
     fn shutdown(&self, _: &TtrpcContext, _: ShutdownRequest) -> TtrpcResult<Empty> {
-        info!("shutdown");
+        debug!("shutdown");
         if self.is_empty() {
             self.exit.signal();
         }
