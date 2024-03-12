@@ -150,10 +150,12 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
 
         // Check if this is a cri container
         let instance = if self.is_empty() && is_cri_container(&spec) {
+            debug!("it is a cri container");
             // If it is cri, then this is the "pause" container, which we don't need to deal with.
             // TODO: maybe we can just go ahead and execute the actual container with runc?
             InstanceData::new_base(req.id(), cfg)?
         } else {
+            debug!("it is NOT a cri container");
             InstanceData::new_instance(req.id(), cfg)?
         };
 
@@ -176,7 +178,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             ..Default::default()
         });
 
-        debug!("create done");
+        debug!("create done for {} with pid {}", req.id(), std::process::id());
 
         // Per the spec, the prestart hook must be called as part of the create operation
         debug!("call prehook before the start");
