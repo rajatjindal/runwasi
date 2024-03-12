@@ -164,8 +164,9 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             .unwrap()
             .insert(req.id().to_string(), Arc::new(instance));
 
+            let reqid = req.id().to_string().clone();
         self.events.send(TaskCreate {
-            container_id: req.id().to_string(),
+            container_id: reqid.clone(),
             bundle: req.bundle,
             rootfs: req.rootfs,
             io: Some(TaskIO {
@@ -178,7 +179,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             ..Default::default()
         });
 
-        debug!("create done for {} with pid {}", req.id(), std::process::id());
+        debug!("create done for {} with pid {}", req.id().clone(), std::process::id());
 
         // Per the spec, the prestart hook must be called as part of the create operation
         debug!("call prehook before the start");
