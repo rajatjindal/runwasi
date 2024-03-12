@@ -165,7 +165,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             .insert(req.id().to_string(), Arc::new(instance));
 
         self.events.send(TaskCreate {
-            container_id: req.id(),
+            container_id: req.id().to_string(),
             bundle: req.bundle,
             rootfs: req.rootfs,
             io: Some(TaskIO {
