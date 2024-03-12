@@ -385,7 +385,9 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
 
     fn state(&self, _: &TtrpcContext, req: StateRequest) -> TtrpcResult<StateResponse> {
         debug!("state: {:?}", req);
-        Ok(self.task_state(req)?)
+        let sresp = self.task_state(req)?;
+        debug!("stateresp: {:?}", sresp);
+        Ok(sresp)
     }
 
     fn shutdown(&self, _: &TtrpcContext, _: ShutdownRequest) -> TtrpcResult<Empty> {
