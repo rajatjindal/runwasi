@@ -303,6 +303,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
         };
 
         Ok(StateResponse {
+            id: req.id(),
             bundle: i.config().get_bundle().to_string_lossy().to_string(),
             stdin: i.config().get_stdin().to_string_lossy().to_string(),
             stdout: i.config().get_stdout().to_string_lossy().to_string(),
