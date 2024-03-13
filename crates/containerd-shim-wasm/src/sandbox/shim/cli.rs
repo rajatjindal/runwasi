@@ -8,6 +8,7 @@ use containerd_shim::util::write_address;
 use containerd_shim::{self as shim, api, ExitSignal};
 use oci_spec::runtime::Spec;
 use shim::Flags;
+use ttrpc::Server;
 
 use crate::sandbox::instance::Instance;
 use crate::sandbox::shim::events::{RemoteEventSender, ToTimestamp};
@@ -57,6 +58,13 @@ where
             .map_err(|e| shim::Error::Other(format!("failed to setup namespaces: {}", e)))?;
 
         let (_child, address) = shim::spawn(opts, grouping, vec![])?;
+
+        let mut server = Server::new()
+                .bind(&address)
+                .expect("failed to bind to socket")
+                .register_service(service);
+
+            server.start().expect("failed to start daemon");
 
         write_address(&address)?;
 
