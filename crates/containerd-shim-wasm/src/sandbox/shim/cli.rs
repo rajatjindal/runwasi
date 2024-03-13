@@ -66,8 +66,8 @@ where
             let service = create_manager(s);
 
         let mut server = Server::new()
-                .bind(&address)
-                .expect("failed to bind to socket")
+                .add_listener(&address)
+                .expect("failed to add listener to socket")
                 .register_service(service);
 
             server.start().expect("failed to start daemon");
