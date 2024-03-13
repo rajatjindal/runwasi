@@ -374,12 +374,9 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
 
     fn wait(&self, _: &TtrpcContext, req: WaitRequest) -> TtrpcResult<WaitResponse> {
         info!("wait: {:?}", req);
-        Ok(WaitResponse {
-            ..Default::default()
-        })
-        // let resp = self.task_wait(req)?;
-        // info!("ttrpc exit wait");
-        // Ok(resp)
+        let resp = self.task_wait(req)?;
+        info!("ttrpc exit wait");
+        Ok(resp)
     }
 
     fn connect(&self, _: &TtrpcContext, req: ConnectRequest) -> TtrpcResult<ConnectResponse> {
