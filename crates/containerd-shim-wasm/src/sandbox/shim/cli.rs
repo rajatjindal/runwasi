@@ -59,6 +59,10 @@ where
 
         let (_child, address) = shim::spawn(opts, grouping, vec![])?;
 
+        let s: ManagerService<Local<I>> = Default::default();
+            let s = Arc::new(Box::new(s) as Box<dyn Manager + Send + Sync>);
+            let service = create_manager(s);
+            
         let mut server = Server::new()
                 .bind(&address)
                 .expect("failed to bind to socket")
