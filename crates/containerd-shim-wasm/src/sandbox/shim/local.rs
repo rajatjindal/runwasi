@@ -353,7 +353,7 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
     fn create(&self, _: &TtrpcContext, req: CreateTaskRequest) -> TtrpcResult<CreateTaskResponse> {
         info!("ttrpc: create: {:?}", req);
         let resp = self.task_create(req)?;
-        info!("ttrpc: exit create: {:?}", req);
+        info!("ttrpc: exit create");
         Ok(resp)
     }
 
