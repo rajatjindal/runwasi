@@ -351,63 +351,77 @@ impl<T: Instance + Sync + Send> SandboxService for Local<T, RemoteEventSender> {
 
 impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
     fn create(&self, _: &TtrpcContext, req: CreateTaskRequest) -> TtrpcResult<CreateTaskResponse> {
-        info!("create: {:?}", req);
-        Ok(self.task_create(req)?)
+        info!("ttrpc: create: {:?}", req);
+        let resp = self.task_create(req)?;
+        info!("ttrpc: exit create: {:?}", req);
+        Ok(resp)
     }
 
     fn start(&self, _: &TtrpcContext, req: StartRequest) -> TtrpcResult<StartResponse> {
-        info!("start: {:?}", req);
+        info!("ttrpc: start: {:?}", req);
         let resp = self.task_start(req)?;
         info!("ttrpc exit start");
         Ok(resp)
     }
 
     fn kill(&self, _: &TtrpcContext, req: KillRequest) -> TtrpcResult<Empty> {
-        info!("kill: {:?}", req);
-        Ok(self.task_kill(req)?)
+        info!("ttrpc: kill: {:?}", req);
+        let resp = self.task_kill(req)?;
+        info!("ttrpc: exit kill");
+        Ok(resp)
     }
 
     fn delete(&self, _: &TtrpcContext, req: DeleteRequest) -> TtrpcResult<DeleteResponse> {
-        info!("delete: {:?}", req);
-        Ok(self.task_delete(req)?)
+        info!("ttrpc: delete: {:?}", req);
+        let resp = self.task_delete(req)?;
+        info!("ttrpc: exit delete");
+        Ok(resp)
     }
 
     fn wait(&self, _: &TtrpcContext, req: WaitRequest) -> TtrpcResult<WaitResponse> {
-        info!("wait: {:?}", req);
+        info!("ttrpc: wait: {:?}", req);
         let resp = self.task_wait(req)?;
-        info!("ttrpc exit wait");
+        info!("ttrpc: exit wait");
         Ok(resp)
     }
 
     fn connect(&self, _: &TtrpcContext, req: ConnectRequest) -> TtrpcResult<ConnectResponse> {
-        info!("connect: {:?}", req);
+        info!("ttrpc: connect: {:?}", req);
         let i = self.get_instance(req.id())?;
         let shim_pid = std::process::id();
         let task_pid = i.pid().unwrap_or_default();
-        Ok(ConnectResponse {
+
+        let resp = ConnectResponse {
             shim_pid,
             task_pid,
             ..Default::default()
-        })
+        };
+
+        info!("ttrpc: exit connect");
+        Ok(resp)
     }
 
     fn state(&self, _: &TtrpcContext, req: StateRequest) -> TtrpcResult<StateResponse> {
-        info!("WHATstate: {:?}", req);
+        info!("ttrpc: state: {:?}", req);
         let sresp = self.task_state(req)?;
-        debug!("stateresp: {:?}", sresp);
+        debug!("ttrpc: exit state: {:?}", sresp);
         Ok(sresp)
     }
 
-    fn shutdown(&self, _: &TtrpcContext, _: ShutdownRequest) -> TtrpcResult<Empty> {
-        info!("shutdown");
+    fn shutdown(&self, _: &TtrpcContext, req: ShutdownRequest) -> TtrpcResult<Empty> {
+        info!("ttrpc: shutdown: {:?}", req);
         if self.is_empty() {
+            info!("ttrpc: exit shutdown inside if");
             self.exit.signal();
         }
+        info!("ttrpc: exit shutdown empty");
         Ok(Empty::new())
     }
 
     fn stats(&self, _ctx: &TtrpcContext, req: StatsRequest) -> TtrpcResult<StatsResponse> {
-        log::info!("stats: {:?}", req);
-        Ok(self.task_stats(req)?)
+        info!("ttrpc: stats: {:?}", req);
+        let resp = self.task_stats(req)?;
+        info!("ttrpc: exit stats");
+        Ok(resp)
     }
 }
