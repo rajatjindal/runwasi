@@ -147,15 +147,15 @@ impl<E: Engine> SandboxInstance for Instance<E> {
     /// Returns None if the timeout is reached before the instance has finished.
     /// This is a blocking call.
     fn wait_timeout(&self, t: impl Into<Option<Duration>>) -> Option<(u32, DateTime<Utc>)> {
-        log::info!(">>>>>> WAIT TIMEOUT: ");
+        log::info!(">>>>>> WAIT TIMEOUT: {}", self.id);
 
         match self.exit_code.wait_timeout(t) {
             Some(s) => {
-                log::info!(">>>>>>> WAIT TIMEOUT SUCCEEDED: {:?}", s);
+                log::info!(">>>>>>> WAIT TIMEOUT SUCCEEDED for id {}: {:?}", self.id, s);
                 Some(s.clone())
             }
             None => {
-                log::info!(">>>>>>>>> WAIT TIMEOUT REACHED: BAD");
+                log::info!(">>>>>>>>> WAIT TIMEOUT REACHED: BAD {}", self.id);
                 None
             }
         }
