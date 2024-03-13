@@ -14,6 +14,7 @@ use crate::sandbox::instance::Instance;
 use crate::sandbox::shim::events::{RemoteEventSender, ToTimestamp};
 use crate::sandbox::shim::local::Local;
 use crate::sys::networking::setup_namespaces;
+use crate::services::sandbox_ttrpc::{create_manager, Manager};
 
 /// Cli implements the containerd-shim cli interface using `Local<T>` as the task service.
 pub struct Cli<T: Instance + Sync + Send> {
@@ -62,7 +63,7 @@ where
         let s: ManagerService<Local<I>> = Default::default();
             let s = Arc::new(Box::new(s) as Box<dyn Manager + Send + Sync>);
             let service = create_manager(s);
-            
+
         let mut server = Server::new()
                 .bind(&address)
                 .expect("failed to bind to socket")
