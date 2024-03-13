@@ -15,6 +15,7 @@ use crate::sandbox::shim::events::{RemoteEventSender, ToTimestamp};
 use crate::sandbox::shim::local::Local;
 use crate::sys::networking::setup_namespaces;
 use crate::services::sandbox_ttrpc::{create_manager, Manager};
+use crate::sandbox::ManagerService;
 
 /// Cli implements the containerd-shim cli interface using `Local<T>` as the task service.
 pub struct Cli<T: Instance + Sync + Send> {
