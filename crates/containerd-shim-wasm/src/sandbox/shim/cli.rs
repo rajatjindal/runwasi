@@ -14,8 +14,6 @@ use crate::sandbox::instance::Instance;
 use crate::sandbox::shim::events::{RemoteEventSender, ToTimestamp};
 use crate::sandbox::shim::local::Local;
 use crate::sys::networking::setup_namespaces;
-use crate::services::sandbox_ttrpc::{create_manager, Manager};
-use crate::sandbox::ManagerService;
 
 /// Cli implements the containerd-shim cli interface using `Local<T>` as the task service.
 pub struct Cli<T: Instance + Sync + Send> {
@@ -59,18 +57,7 @@ where
         setup_namespaces(&spec)
             .map_err(|e| shim::Error::Other(format!("failed to setup namespaces: {}", e)))?;
 
-        let (_child, address) = shim::spawn(opts, grouping, vec![])?;
-
-        let s: ManagerService<Local<I>> = Default::default();
-            let s = Arc::new(Box::new(s) as Box<dyn Manager + Send + Sync>);
-            let service = create_manager(s);
-
-        let mut server = Server::new()
-                .add_listener(&address)
-                .expect("failed to add listener to socket")
-                .register_service(service);
-
-            server.start().expect("failed to start daemon");
+        let (child, address) = shim::spawn(opts, grouping, vec![])?;
 
         write_address(&address)?;
 
