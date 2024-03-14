@@ -47,6 +47,7 @@ impl<T: Instance> InstanceData<T> {
     }
 
     pub fn start(&self) -> Result<u32> {
+        
         let mut s = self.state.write().unwrap();
         s.start()?;
 

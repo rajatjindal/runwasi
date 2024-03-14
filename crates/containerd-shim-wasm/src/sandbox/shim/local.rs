@@ -179,10 +179,10 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             ..Default::default()
         });
 
-        debug!("create done for {} with pid {}", reqid.clone(), std::process::id());
+        info!("create done for {} with pid {}", reqid.clone(), std::process::id());
 
         // Per the spec, the prestart hook must be called as part of the create operation
-        debug!("call prehook before the start");
+        info!("call prehook before the start");
         oci::setup_prestart_hooks(spec.hooks())?;
 
         Ok(CreateTaskResponse {
@@ -225,7 +225,7 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             .context("could not spawn thread to wait exit")
             .map_err(Error::from)?;
 
-        debug!("started: {:?}", req);
+        info!("started: {:?}", req);
 
         Ok(StartResponse {
             pid,
@@ -320,13 +320,17 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
     }
 
     fn task_stats(&self, req: StatsRequest) -> Result<StatsResponse> {
+        info!("into task stats");
         let i = self.get_instance(req.id())?;
+        info!("after getting instance");
         let pid = i
             .pid()
             .ok_or_else(|| Error::InvalidArgument("task is not running".to_string()))?;
 
+            info!("after getting pid");
         let metrics = get_metrics(pid)?;
 
+        info!("after getting metrics");
         Ok(StatsResponse {
             stats: Some(metrics).into(),
             ..Default::default()
