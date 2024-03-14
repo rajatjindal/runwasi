@@ -1,4 +1,4 @@
-zuse std::time::Duration;
+use std::time::Duration;
 
 use chrono::{DateTime, Utc};
 
