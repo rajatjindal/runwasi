@@ -328,11 +328,11 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
             .ok_or_else(|| Error::InvalidArgument("task is not running".to_string()))?;
 
             info!("after getting pid");
-        // let metrics = get_metrics(pid)?;
+        let metrics = get_metrics(pid)?;
 
         info!("after getting metrics");
         Ok(StatsResponse {
-            // stats: Some(metrics).into(),
+            stats: Some(metrics).into(),
             ..Default::default()
         })
     }
