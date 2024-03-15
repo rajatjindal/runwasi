@@ -48,4 +48,4 @@ serial_test = "2"
 panic = "abort"
 
 [patch.crates-io]
-containerd-shim = { git = 'https://github.com/Mossaka/rust-extensions/crates/shim',  rev = "bfebb9aabc709e6b0efb5378cc3125c686ae3a3e" }
+containerd-shim = { git = 'https://github.com/rajatjindal/rust-extensions/crates/shim',  rev = "1cb5e1501d9a8c95d039792e8b27ae2f9e68e02d" }
