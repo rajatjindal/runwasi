@@ -231,13 +231,13 @@ impl<T: Instance + Send + Sync, E: EventSender> Local<T, E> {
     }
 
     fn task_kill(&self, req: KillRequest) -> Result<Empty> {
-        log::info("into task_kill");
+        log::info!("into task_kill");
         if !req.exec_id().is_empty() {
             return Err(Error::InvalidArgument("exec is not supported".to_string()));
         }
-        log::info("into task_kill - calling kill");
+        log::info!("into task_kill - calling kill");
         self.get_instance(req.id())?.kill(req.signal())?;
-        log::info("into task_kill - after kill");
+        log::info!("into task_kill - after kill");
         Ok(Empty::new())
     }
 
