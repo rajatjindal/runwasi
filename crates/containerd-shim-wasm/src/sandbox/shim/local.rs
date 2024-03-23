@@ -361,7 +361,9 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
 
     fn kill(&self, _: &TtrpcContext, req: KillRequest) -> TtrpcResult<Empty> {
         log::info!("kill: {:?}", req);
-        Ok(self.task_kill(req)?)
+        let resp = self.task_kill(req)?;
+        log::info!("kill: exit");
+        Ok(resp)
     }
 
     fn delete(&self, _: &TtrpcContext, req: DeleteRequest) -> TtrpcResult<DeleteResponse> {
@@ -371,7 +373,9 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
 
     fn wait(&self, _: &TtrpcContext, req: WaitRequest) -> TtrpcResult<WaitResponse> {
         log::info!("wait: {:?}", req);
-        Ok(self.task_wait(req)?)
+        let resp = self.task_wait(req)?;
+        log::info!("wait: exit");
+        Ok(resp)
     }
 
     fn connect(&self, _: &TtrpcContext, req: ConnectRequest) -> TtrpcResult<ConnectResponse> {
@@ -379,6 +383,7 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
         let i = self.get_instance(req.id())?;
         let shim_pid = std::process::id();
         let task_pid = i.pid().unwrap_or_default();
+        log::info!("connect: exit");
         Ok(ConnectResponse {
             shim_pid,
             task_pid,
@@ -388,19 +393,25 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
 
     fn state(&self, _: &TtrpcContext, req: StateRequest) -> TtrpcResult<StateResponse> {
         log::info!("state: {:?}", req);
-        Ok(self.task_state(req)?)
+        let resp = self.task_state(req)?;
+        log::info!("state: exit");
+        Ok(resp)
     }
 
     fn shutdown(&self, _: &TtrpcContext, _: ShutdownRequest) -> TtrpcResult<Empty> {
         log::info!("shutdown");
         if self.is_empty() {
+            log::info!("shutdown is_empty");
             self.exit.signal();
         }
+        log::info!("shutdown exit");
         Ok(Empty::new())
     }
 
     fn stats(&self, _ctx: &TtrpcContext, req: StatsRequest) -> TtrpcResult<StatsResponse> {
         log::info!("stats: {:?}", req);
-        Ok(self.task_stats(req)?)
+        let resp = self.task_stats(req)?;
+        log::info!("stats: exit");
+        Ok(resp)
     }
 }
