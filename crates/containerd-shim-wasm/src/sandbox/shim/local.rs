@@ -397,6 +397,8 @@ impl<T: Instance + Sync + Send, E: EventSender> Task for Local<T, E> {
 
     fn stats(&self, _ctx: &TtrpcContext, req: StatsRequest) -> TtrpcResult<StatsResponse> {
         log::info!("stats: {:?}", req);
-        Ok(self.task_stats(req)?)
+        let statsresp =  self.task_stats(req)?;
+        log::info!("stats resp: {:?}", statsresp);
+        Ok(statsresp)
     }
 }
